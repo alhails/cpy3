@@ -65,3 +65,13 @@ func PyRun_SimpleString(command string) int {
 	// C.PyRun_SimpleString is a macro, using C.PyRun_SimpleStringFlags instead
 	return int(C.PyRun_SimpleStringFlags(ccommand, nil))
 }
+
+//PyRun_String : https://docs.python.org/3/c-api/veryhigh.html?highlight=pycompilerflags#c.PyRun_String
+func PyRun_String(command string) *PyObject {
+	ccommand := C.CString(command)
+	defer C.free(unsafe.Pointer(ccommand))
+	m := PyImport_AddModule("__main__")
+	d := PyModule_GetDict(m)
+
+	return togo(C.PyRun_StringFlags(ccommand, C.Py_file_input, toc(d), nil, nil))
+}

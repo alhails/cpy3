@@ -14,3 +14,7 @@ vendor
 
 # IDE config
 .vscode
+
+Makefile
+
+build/
