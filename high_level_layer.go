@@ -67,11 +67,24 @@ func PyRun_SimpleString(command string) int {
 }
 
 //PyRun_String : https://docs.python.org/3/c-api/veryhigh.html?highlight=pycompilerflags#c.PyRun_String
-func PyRun_String(command string) *PyObject {
+func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 	ccommand := C.CString(command)
 	defer C.free(unsafe.Pointer(ccommand))
 	m := PyImport_AddModule("__main__")
 	d := PyModule_GetDict(m)
+
+	for k, v := range globals {
+		var item *PyObject
+		switch parsed := v.(type) {
+		case int:
+			item = PyLong_FromGoInt(parsed)
+		case string:
+			item = PyUnicode_FromString(parsed)
+		}
+		if item != nil {
+			PyDict_SetItem(d, PyUnicode_FromString(k), item)
+		}
+	}
 
 	return togo(C.PyRun_StringFlags(ccommand, C.Py_file_input, toc(d), nil, nil))
 }
