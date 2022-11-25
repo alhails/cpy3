@@ -78,6 +78,12 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 		switch parsed := v.(type) {
 		case int:
 			item = PyLong_FromGoInt(parsed)
+		case bool:
+			if parsed {
+				item = Py_True
+				break
+			}
+			item = Py_False
 		case string:
 			item = PyUnicode_FromString(parsed)
 		}
