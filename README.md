@@ -32,7 +32,7 @@ the `PKG_CONFIG_PATH` environment variable.
 
 ## Go get
 
-Then simply `go get github.com/go-python/cpy3`
+Then simply `go get github.com/datasoft-computing/cpy3`
 
 # API
 
