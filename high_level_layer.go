@@ -71,8 +71,11 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 	ccommand := C.CString(command)
 	defer C.free(unsafe.Pointer(ccommand))
 	m := PyImport_AddModule("__main__")
+	defer m.DecRef()
 	globalDict := PyModule_GetDict(m)
+	defer globalDict.DecRef()
 	localDict := PyModule_GetDict(m)
+	defer localDict.DecRef()
 
 	for k, v := range globals {
 		var item *PyObject
