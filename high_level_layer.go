@@ -71,7 +71,8 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 	ccommand := C.CString(command)
 	defer C.free(unsafe.Pointer(ccommand))
 	m := PyImport_AddModule("__main__")
-	d := PyModule_GetDict(m)
+	globalDict := PyModule_GetDict(m)
+	localDict := PyModule_GetDict(m)
 
 	for k, v := range globals {
 		var item *PyObject
@@ -88,9 +89,9 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 			item = PyUnicode_FromString(parsed)
 		}
 		if item != nil {
-			PyDict_SetItem(d, PyUnicode_FromString(k), item)
+			PyDict_SetItem(localDict, PyUnicode_FromString(k), item)
 		}
 	}
 
-	return togo(C.PyRun_StringFlags(ccommand, C.Py_file_input, toc(d), nil, nil))
+	return togo(C.PyRun_StringFlags(ccommand, C.Py_file_input, toc(globalDict), toc(localDict), nil))
 }
