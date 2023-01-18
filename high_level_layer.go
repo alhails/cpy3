@@ -89,7 +89,8 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 			item = PyUnicode_FromString(parsed)
 		}
 		if item != nil {
-			PyDict_SetItem(localDict, PyUnicode_FromString(k), item)
+			PyDict_SetItemString(localDict, k, item)
+			defer item.DecRef()
 		}
 	}
 
