@@ -67,7 +67,7 @@ func PyRun_SimpleString(command string) int {
 }
 
 //PyRun_String : https://docs.python.org/3/c-api/veryhigh.html?highlight=pycompilerflags#c.PyRun_String
-func PyRun_String(command string, globals map[string]interface{}) *PyObject {
+func PyRun_String(command string, locals map[string]interface{}) *PyObject {
 	ccommand := C.CString(command)
 	defer C.free(unsafe.Pointer(ccommand))
 	m := PyImport_AddModule("__main__")
@@ -77,7 +77,7 @@ func PyRun_String(command string, globals map[string]interface{}) *PyObject {
 	localDict := PyModule_GetDict(m)
 	defer localDict.DecRef()
 
-	for k, v := range globals {
+	for k, v := range locals {
 		var item *PyObject
 		switch parsed := v.(type) {
 		case int:
